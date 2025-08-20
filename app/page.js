@@ -8,33 +8,56 @@ import HeroSection from "./components/homepage/hero-section";
 import Projects from "./components/homepage/projects";
 import Skills from "./components/homepage/skills";
 
-async function getData() {
-  const res = await fetch(`https://dev.to/api/articles?username=${personalData.devUsername}`)
+// Fetch repos with README images
+async function getRepos(username) {
+  const res = await fetch(`https://api.github.com/users/${username}/repos`, {
+    next: { revalidate: 60 }, // cache for 1 min (optional)
+  });
 
-  if (!res.ok) {
-    throw new Error('Failed to fetch data')
-  }
+  if (!res.ok) throw new Error("Failed to fetch repos");
 
-  const data = await res.json();
+  const repos = await res.json();
 
-  const filtered = data.filter((item) => item?.cover_image).sort(() => Math.random() - 0.5);
+  const enriched = await Promise.all(
+    repos.map(async (repo) => {
+      try {
+        const readmeRes = await fetch(
+          `https://api.github.com/repos/${personalData.devUsername}/${repo.name}/readme`
+        );
 
-  return filtered;
-};
+        if (!readmeRes.ok) return { ...repo, cover_image: null };
+
+        const readme = await readmeRes.json();
+        const content = Buffer.from(readme.content, "base64").toString("utf-8");
+
+        // Regex → get first ![](image-url) from README
+        const match = content.match(/!\[.*?\]\((.*?)\)/);
+        const image = match ? match[1] : null;
+
+        return { ...repo, cover_image: image };
+      } catch {
+        return { ...repo, cover_image: null };
+      }
+    })
+  );
+
+  return enriched;
+}
 
 export default async function Home() {
-  const blogs = await getData();
+  const repos = await getRepos(personalData.devUsername);
 
   return (
-    <div suppressHydrationWarning >
+    <div suppressHydrationWarning>
       <HeroSection />
       <AboutSection />
       <Experience />
       <Skills />
       <Projects />
       <Education />
-      <Blog blogs={blogs} />
+      {/* Pass repos as blogs → so Blog section shows GitHub projects */}
+      <Blog blogs={repos} />
       <ContactSection />
     </div>
-  )
-};
+  );
+}

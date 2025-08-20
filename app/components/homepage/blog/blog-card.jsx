@@ -1,61 +1,51 @@
-// @flow strict
-import { timeConverter } from '@/utils/time-converter';
-import Image from 'next/image';
-import Link from 'next/link';
-import { BsHeartFill } from 'react-icons/bs';
-import { FaCommentAlt } from 'react-icons/fa';
 
-function BlogCard({ blog }) {
-
+export default function BlogCard({ blog }) {
   return (
-    <div className="border border-[#1d293a] hover:border-[#464c6a] transition-all duration-500 bg-[#1b203e] rounded-lg relative group"
-    >
-      <div className="h-44 lg:h-52 w-auto cursor-pointer overflow-hidden rounded-t-lg">
-        <Image
-          src={blog?.cover_image}
-          height={1080}
-          width={1920}
-          alt=""
-          className='h-full w-full group-hover:scale-110 transition-all duration-300'
+    <div className="from-[#0d1224] border-[#1b2c68a0] relative rounded-xl border bg-gradient-to-r to-[#0a0d37] shadow-lg hover:shadow-2xl transition overflow-hidden flex flex-col">
+      {/* Cover Image */}
+      {blog.cover_image || blog.image ? (
+        <img
+          src={blog.cover_image || blog.image}
+          alt={blog.name}
+          className="w-full h-48 object-cover border-b border-[#1b2c68a0]"
         />
-      </div>
-      <div className="p-2 sm:p-3 flex flex-col">
-        <div className="flex justify-between items-center text-[#16f2b3] text-sm">
-          <p>{timeConverter(blog.published_at)}</p>
-          <div className="flex items-center gap-3">
-            <p className="flex items-center gap-1">
-              <BsHeartFill />
-              <span>{blog.public_reactions_count}</span>
-            </p>
-            {blog.comments_count > 0 &&
-              <p className="flex items-center gap-1">
-                <FaCommentAlt />
-                <span>{blog.comments_count}</span>
-              </p>
-            }
-          </div>
+      ) : (
+        <div className="w-full h-48 bg-[#1a1443] flex items-center justify-center text-gray-400">
+          No Image
         </div>
-        <Link target='_blank' href={blog.url}>
-          <p className='my-2 lg:my-3 cursor-pointer text-lg text-white sm:text-xl font-medium hover:text-violet-500'>
-            {blog.title}
-          </p>
-        </Link>
-        <p className='mb-2 text-sm text-[#16f2b3]'>
-          {`${blog.reading_time_minutes} Min Read`}
+      )}
+
+      {/* Content */}
+      <div className="p-5 flex flex-col flex-1">
+        <h3 className="text-lg font-semibold text-[#16f2b3] mb-2">
+          {blog.name}
+        </h3>
+        <p className="text-sm text-gray-300 flex-1 line-clamp-3">
+          {blog.description || "No description provided"}
         </p>
-        <p className='text-sm lg:text-base text-[#d3d8e8] pb-3 lg:pb-6 line-clamp-3'>
-          {blog.description}
-        </p>
-        {/* <div className="">
-          <Link target='_blank' href={blog.url}>
-            <button className='bg-violet-500 text-white px-3 py-1.5 rounded-full text-xs'>
-              Read More
-            </button>
-          </Link>
-        </div> */}
+
+        {/* Links */}
+        <div className="flex justify-between items-center mt-4">
+          <a
+            href={blog.html_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-400 hover:underline text-sm font-medium"
+          >
+            GitHub →
+          </a>
+          {blog.homepage && (
+            <a
+              href={blog.homepage}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-green-400 hover:underline text-sm font-medium"
+            >
+              Live Demo →
+            </a>
+          )}
+        </div>
       </div>
     </div>
   );
-};
-
-export default BlogCard;
+}

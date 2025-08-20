@@ -15,7 +15,7 @@ const Projects = () => {
         </div>
       </div>
 
-      <div className="pt-24">
+      {/* <div className="pt-24">
         <div className="flex flex-col gap-6">
           {projectsData.slice(0, 4).map((project, index) => (
             <div
@@ -29,7 +29,7 @@ const Projects = () => {
             </div>
           ))}
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };
