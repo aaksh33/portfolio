@@ -28,16 +28,16 @@ function ProjectCard({ project }) {
         <img
           src={project.image}
           alt={project.name}
-          className="w-full h-40 object-cover rounded-t-lg"
+          className="w-full h-44 object-cover"
         />
       ) : (
-        <div className="w-full h-40 bg-gray-800 flex items-center justify-center text-gray-500 text-sm">
+        <div className="w-full h-44 bg-gray-800 flex items-center justify-center text-gray-500 text-sm">
           No Image Available
         </div>
       )}
 
       {/* Code Styled Info */}
-      <div className="overflow-hidden border-t-[2px] border-indigo-900 px-4 lg:px-8 py-4 lg:py-6 flex-1 flex flex-col">
+      <div className="overflow-hidden border-indigo-900 px-4 lg:px-8 py-4 lg:py-6 flex-1 flex flex-col">
         <code className="font-mono text-xs md:text-sm lg:text-base flex-1">
           <div>
             <span className="mr-2 text-pink-500">const</span>

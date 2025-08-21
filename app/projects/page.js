@@ -44,8 +44,16 @@ async function getRepos() {
           .map((line) => line.trim())
           .filter((line) => line.length > 0 && !line.startsWith("#")); // ignore headings
 
-        const readmeDescription =
-          descMatch.length > 0 ? descMatch[0] : "";
+        let readmeDescription = descMatch.length > 0 ? descMatch[0] : "";
+
+        // Clean markdown syntax (bold, italic, inline code, links)
+        readmeDescription = readmeDescription
+          .replace(/\*\*(.*?)\*\*/g, "$1")   // bold → plain
+          .replace(/\*(.*?)\*/g, "$1")       // italic → plain
+          .replace(/`(.*?)`/g, "$1")         // inline code → plain
+          .replace(/\[(.*?)\]\(.*?\)/g, "$1") // links [text](url) → text
+          .replace(/[#>]/g, "")              // remove heading/blockquote chars
+          .trim();
 
         return {
           ...repo,

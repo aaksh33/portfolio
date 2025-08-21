@@ -1,4 +1,3 @@
-
 export default function BlogCard({ blog }) {
   return (
     <div className="from-[#0d1224] border-[#1b2c68a0] relative rounded-xl border bg-gradient-to-r to-[#0a0d37] shadow-lg hover:shadow-2xl transition overflow-hidden flex flex-col">
@@ -21,7 +20,7 @@ export default function BlogCard({ blog }) {
           {blog.name}
         </h3>
         <p className="text-sm text-gray-300 flex-1 line-clamp-3">
-          {blog.description || "No description provided"}
+          {blog.fullDescription || "No description provided"}
         </p>
 
         {/* Links */}

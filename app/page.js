@@ -8,44 +8,72 @@ import HeroSection from "./components/homepage/hero-section";
 import Projects from "./components/homepage/projects";
 import Skills from "./components/homepage/skills";
 
-// Fetch repos with README images
-async function getRepos(username) {
-  const res = await fetch(`https://api.github.com/users/${username}/repos`, {
-    next: { revalidate: 60 }, // cache for 1 min (optional)
-  });
+// Fetch repos with README images and descriptions
+async function getRepos() {
+  const res = await fetch(
+    `https://api.github.com/users/${personalData.devUsername}/repos`,
+    { next: { revalidate: 60 } }
+  );
 
-  if (!res.ok) throw new Error("Failed to fetch repos");
+  if (!res.ok) {
+    throw new Error("Failed to fetch repositories");
+  }
 
   const repos = await res.json();
 
-  const enriched = await Promise.all(
+  // fetch README images + description for each repo
+  const reposWithDetails = await Promise.all(
     repos.map(async (repo) => {
       try {
         const readmeRes = await fetch(
-          `https://api.github.com/repos/${personalData.devUsername}/${repo.name}/readme`
+          `https://raw.githubusercontent.com/${personalData.devUsername}/${repo.name}/main/README.md`
         );
 
-        if (!readmeRes.ok) return { ...repo, cover_image: null };
+        let readmeDescription = "";
+        let imageUrl = null;
 
-        const readme = await readmeRes.json();
-        const content = Buffer.from(readme.content, "base64").toString("utf-8");
+        if (readmeRes.ok) {
+          const readmeText = await readmeRes.text();
 
-        // Regex → get first ![](image-url) from README
-        const match = content.match(/!\[.*?\]\((.*?)\)/);
-        const image = match ? match[1] : null;
+          // extract first image using regex ![alt](url)
+          const imageMatch = readmeText.match(/!\[.*?\]\((.*?)\)/);
+          imageUrl = imageMatch ? imageMatch[1] : null;
 
-        return { ...repo, cover_image: image };
+          // extract first paragraph (non-empty line of text)
+          const descMatch = readmeText
+            .replace(/!\[.*?\]\(.*?\)/g, "") // remove images
+            .split("\n")
+            .map((line) => line.trim())
+            .filter((line) => line.length > 0 && !line.startsWith("#")); // ignore headings
+
+          readmeDescription = descMatch.length > 0 ? descMatch[0] : "";
+
+          // ✅ Clean markdown syntax (bold, italic, inline code, links, etc.)
+          readmeDescription = readmeDescription
+            .replace(/\*\*(.*?)\*\*/g, "$1") // bold → plain
+            .replace(/\*(.*?)\*/g, "$1") // italic → plain
+            .replace(/`(.*?)`/g, "$1") // inline code → plain
+            .replace(/\[(.*?)\]\(.*?\)/g, "$1") // links [text](url) → text
+            .replace(/[#>]/g, "") // remove heading/blockquote chars
+            .trim();
+        }
+
+        return {
+          ...repo,
+          image: imageUrl,
+          fullDescription: readmeDescription || repo.description,
+        };
       } catch {
-        return { ...repo, cover_image: null };
+        return { ...repo, image: null, fullDescription: repo.description };
       }
     })
   );
 
-  return enriched;
+  return reposWithDetails;
 }
 
 export default async function Home() {
-  const repos = await getRepos(personalData.devUsername);
+  const repos = await getRepos(); // ✅ don’t pass param, function already uses personalData.devUsername
 
   return (
     <div suppressHydrationWarning>
@@ -61,3 +89,4 @@ export default async function Home() {
     </div>
   );
 }
+
