@@ -124,8 +124,6 @@ async function Page() {
                 <ProjectCard
                   project={{
                     name: project.name,
-                    tools: project.tools || [],
-                    role: project.role || "",
                     description: project.fullDescription,
                     image: project.image, // ✅ Pass image to ProjectCard
                     githubUrl: project.html_url, // optional
