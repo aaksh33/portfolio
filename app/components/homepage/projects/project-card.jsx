@@ -23,8 +23,8 @@ function ProjectCard({ project }) {
         </div>
       </div>
 
-       {/* Image Section */}
-      {project.image ? (
+      {/* Image Section */}
+      {project.image && /\.(png|jpe?g)$/i.test(project.image) ? (
         <img
           src={project.image}
           alt={project.name}

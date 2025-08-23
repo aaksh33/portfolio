@@ -2,9 +2,9 @@ export default function BlogCard({ blog }) {
   return (
     <div className="from-[#0d1224] border-[#1b2c68a0] relative rounded-xl border bg-gradient-to-r to-[#0a0d37] shadow-lg hover:shadow-2xl transition overflow-hidden flex flex-col">
       {/* Cover Image */}
-      {blog.cover_image || blog.image ? (
+      {(blog.cover_image && /\.(png|jpe?g)$/i.test(blog.cover_image)) || (blog.image && /\.(png|jpe?g)$/i.test(blog.image)) ? (
         <img
-          src={blog.cover_image || blog.image}
+          src={blog.cover_image && /\.(png|jpe?g)$/i.test(blog.cover_image) ? blog.cover_image : blog.image}
           alt={blog.name}
           className="w-full h-48 object-cover border-b border-[#1b2c68a0]"
         />
