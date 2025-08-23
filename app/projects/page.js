@@ -26,7 +26,7 @@ async function getRepos() {
           return {
             ...repo,
             image: null,
-            fullDescription: readmeDescription || repo.description || "No description provided",
+            fullDescription: repo.description || "No description provided",
             tools: repo.topics || [],
             role: "",
           };
@@ -34,8 +34,28 @@ async function getRepos() {
         const readmeText = await readmeRes.text();
 
         // extract first image using regex ![alt](url)
+        let imageUrl = null;
         const imageMatch = readmeText.match(/!\[.*?\]\((.*?)\)/);
-        const imageUrl = imageMatch ? imageMatch[1] : null;
+        if (imageMatch && imageMatch[1]) {
+          let url = imageMatch[1];
+
+          // Fix GitHub image URLs that use relative paths
+          if (/^\.\.?\//.test(url)) {
+            url = `https://raw.githubusercontent.com/${personalData.devUsername}/${repo.name}/main/${url.replace(/^\.\/?/, "")}`;
+          }
+
+          // ✅ Allow GitHub.com links as well
+          if (/^https?:\/\/(www\.)?github\.com/.test(url)) {
+            // Convert blob links → raw links
+            url = url.replace("github.com", "raw.githubusercontent.com")
+                     .replace("/blob/", "/");
+          }
+
+          // Accept only png/jpg/jpeg
+          if (/\.(png|jpe?g)$/i.test(url)) {
+            imageUrl = url;
+          }
+        }
 
         // extract first paragraph (non-empty line of text)
         const descMatch = readmeText
