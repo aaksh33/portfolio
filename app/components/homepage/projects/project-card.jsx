@@ -47,7 +47,7 @@ function ProjectCard({ project }) {
           </div>
           <div>
             <span className="ml-4 lg:ml-8 mr-2 text-white">name:</span>
-            <span className="text-amber-300">'{project.name}'</span>
+              <span className="text-amber-300">&#39;{project.name}&#39;</span>
             <span className="text-gray-400">,</span>
           </div>
           <div className="ml-4 lg:ml-8 mr-2">
@@ -55,7 +55,7 @@ function ProjectCard({ project }) {
             <span className="text-gray-400">[</span>
             {project.tools?.map((tag, i) => (
               <React.Fragment key={i}>
-                <span className="text-amber-300">'{tag}'</span>
+                  <span className="text-amber-300">&#39;{tag}&#39;</span>
                 {project.tools?.length - 1 !== i && (
                   <span className="text-gray-400">, </span>
                 )}
@@ -65,14 +65,14 @@ function ProjectCard({ project }) {
           </div>
           <div>
             <span className="ml-4 lg:ml-8 mr-2 text-white">myRole:</span>
-            <span className="text-orange-400">'{project.role}'</span>
+              <span className="text-orange-400">&#39;{project.role}&#39;</span>
             <span className="text-gray-400">,</span>
           </div>
           <div className="ml-4 lg:ml-8 mr-2">
             <span className="text-white">description:</span>
-            <span className="text-cyan-400 line-clamp-3">
-              '{project.description || "No description provided"}'
-            </span>
+              <span className="text-cyan-400 line-clamp-3">
+                &#39;{project.description || "No description provided"}&#39;
+              </span>
             <span className="text-gray-400">,</span>
           </div>
           <div className="ml-4 lg:ml-8 mr-2 flex flex-col space-y-1">
@@ -83,7 +83,7 @@ function ProjectCard({ project }) {
                 rel="noopener noreferrer"
                 className="text-blue-400 hover:underline text-sm"
               >
-                GitHub →
+                  GitHub &#8594;
               </a>
             )}
             {project.live && (
@@ -93,12 +93,12 @@ function ProjectCard({ project }) {
                 rel="noopener noreferrer"
                 className="text-green-400 hover:underline text-sm"
               >
-                Live Demo →
+                  Live Demo &#8594;
               </a>
             )}
           </div>
           <div>
-            <span className="text-gray-400">{`};`}</span>
+              <span className="text-gray-400">&#123;&#125;&#59;</span>
           </div>
         </code>
       </div>
