@@ -19,7 +19,7 @@ const GlowCard = ({ children, identifier }) => {
     };
 
     const UPDATE = (event) => {
-      if (!event) return; // prevent SSR error
+      if (!event) return; // skip if no event
       for (const CARD of CARDS) {
         const CARD_BOUNDS = CARD.getBoundingClientRect();
 
@@ -50,8 +50,6 @@ const GlowCard = ({ children, identifier }) => {
       }
     };
 
-    document.body.addEventListener("pointermove", UPDATE);
-
     const RESTYLE = () => {
       if (!CONTAINER) return;
       CONTAINER.style.setProperty("--gap", CONFIG.gap);
@@ -64,8 +62,9 @@ const GlowCard = ({ children, identifier }) => {
     };
 
     RESTYLE();
-    // instead of UPDATE(); → pass dummy event
-    UPDATE({ x: -9999, y: -9999 });
+
+    // ✅ only run on pointer move (no dummy call)
+    document.body.addEventListener("pointermove", UPDATE);
 
     return () => {
       document.body.removeEventListener("pointermove", UPDATE);
